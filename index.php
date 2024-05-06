@@ -8,5 +8,6 @@
         <?php
         // put your code here
         ?>
+        <h1>Bye</h1>
     </body>
 </html>
