@@ -1,10 +1,10 @@
 <?php
-$host = "localhost";
-$user = "root";
-$password = "";
-$db = "mydb";
-
-$link = mysqli_connect($host, $user, $password, $db) or die(mysqli_connect_error());
+    $host = "localhost";
+    $user = "root";
+    $password = "";
+    $db = "mydb";
+    
+    $link = mysqli_connect($host, $user, $password, $db) or die(mysqli_connect_error());
 
 if (isset($_GET['staffId'])) {
     $staffID = $_GET['staffId'];
@@ -32,7 +32,6 @@ mysqli_close($link);
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Edit User</title>
-        <!-- Bootstrap CSS -->
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
         <style>
@@ -141,30 +140,30 @@ mysqli_close($link);
                 <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link" href="/FYP_FoodOrderApp/Login/admin.php">Home</a>
+                        <a class="nav-link" href="../../Login/admin.php">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/FYP_FoodOrderApp/Admin/table/tablesAdmin.php">Tables</a>
+                        <a class="nav-link" href="../../Admin/table/tablesAdmin.php">Tables</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/FYP_FoodOrderApp/Admin/user/viewUsers.php">Users</a>
+                        <a class="nav-link" href="../../Admin/user/viewUsers.php">Users</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/FYP_FoodOrderApp/Admin/menu/viewMenu.php">Menu</a>
+                        <a class="nav-link" href="../../Admin/menu/viewMenu.php">Menu</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/FYP_FoodOrderApp/Admin/orders/viewAllOrders.php">View All Orders</a>
+                        <a class="nav-link" href="../../Admin/orders/viewAllOrders.php">View All Orders</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/FYP_FoodOrderApp/Admin/reports/Report.php">Reports</a>
+                        <a class="nav-link" href="../../Admin/reports/Report.php">Reports</a>
                     </li>
                 </ul>
                     <ul class="navbar-nav ms-auto">
                         <li class="nav-item">
-                            <a class="btn btn-outline-light backnav" href="/FYP_FoodOrderApp/Admin/user/viewUsers.php">Back</a>
+                            <a class="btn btn-outline-light backnav" href="../../Admin/user/viewUsers.php">Back</a>
                         </li>
                         <li class="nav-item">
-                            <a class="btn btn-outline-light logOutNav" id="logoutButton" href="/FYP_FoodOrderApp/index.php">Logout</a>
+                            <a class="btn btn-outline-light logOutNav" id="logoutButton" href="../../index.php">Logout</a>
                         </li>
                     </ul>
                 </div>
@@ -173,7 +172,7 @@ mysqli_close($link);
 
         <h1>Editing Users</h1><br>
         <div class="container d-flex justify-content-center align-items-center">
-            <form id="postReview" method="post" action="/FYP_FoodOrderApp/Admin/user/doEditUsers.php">
+            <form id="postReview" method="post" action="../../Admin/user/doEditUsers.php">
                 <label for="staffid">Staff ID:</label><br>
                 <input type="text" size="70px" id="staffid" name="staffID" value="<?php echo $staffID ?>" disabled><br>
                 <input type="hidden" name="staffid" id="adminInt" value="<?php echo $staffID ?>">
@@ -212,6 +211,7 @@ mysqli_close($link);
         </div>
     </body>
 </html>
+
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 <script>
@@ -221,29 +221,20 @@ mysqli_close($link);
         availInt = availInt === 1 ? 0 : 1;
         document.getElementById('availInt').value = availInt;
     }
-    
-            // Add event listener to the logout button
-        document.getElementById('logoutButton').addEventListener('click', function(event) {
-            // Prevent default action
+    document.getElementById('logoutButton').addEventListener('click', function(event) {
+        event.preventDefault();
+        if (confirm('Are you sure you want to logout?')) {
+            window.location.href = '../../index.php';
+        }
+    });
+    document.getElementById('editButton').addEventListener('click', function(event) {
+        if (!confirm('Are you sure you want to edit?')) {
             event.preventDefault();
-            // Show confirmation dialog
-            if (confirm('Are you sure you want to logout?')) {
-                // If confirmed, proceed with the logout
-                window.location.href = '/FYP_FoodOrderApp/index.php';
-            }
-        });
-        
-                                    // Add event listener to the logout button
-        document.getElementById('editButton').addEventListener('click', function(event) {
-            if (!confirm('Are you sure you want to edit?')) {
-                            event.preventDefault();
-            }
-        });
-        
-                            // Add event listener to the logout button
-        document.getElementById('deleteButton').addEventListener('click', function(event) {
-            if (!confirm('Are you sure you want to delete?')) {
-                            event.preventDefault();
-            }
-        });
+        }
+    });
+    document.getElementById('deleteButton').addEventListener('click', function(event) {
+        if (!confirm('Are you sure you want to delete?')) {
+            event.preventDefault();
+        }
+    });
 </script>

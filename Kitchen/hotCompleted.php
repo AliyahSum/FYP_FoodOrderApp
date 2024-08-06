@@ -1,20 +1,20 @@
 <?php
 session_start();
-$host = "localhost";
-$user = "root";
-$password = "";
-$db = "mydb";
+    $host = "localhost";
+    $user = "root";
+    $password = "";
+    $db = "mydb";
+    
+    $link = mysqli_connect($host, $user, $password, $db) or die(mysqli_connect_error());
 
-$link = mysqli_connect($host, $user, $password, $db) or die(mysqli_connect_error());
-
-$query = "SELECT cust_table.table_num, menu_item.item_name, menu_item.prepTime, menu_order.special_request, menu_order.quantity, menu_order.serve_later, orders.orderDateTime, orders.orderID
+$query = "SELECT *
         FROM orders
         INNER JOIN cust_table ON orders.tableID = cust_table.tableID
         INNER JOIN menu_order ON orders.orderID = menu_order.orderID
         INNER JOIN menu_item ON menu_order.menuitemID = menu_item.menuitemID
         INNER JOIN category ON category.categoryID = menu_item.categoryID
         WHERE orders.orderStatusHot = 1 AND stationID = 'STN2'
-        ORDER BY cust_table.table_num, menu_order.orderID";
+        ORDER BY menu_order.orderID";
 $result = mysqli_query($link, $query) or die(mysqli_error($link));
 
 $arrContent = [];
@@ -32,6 +32,7 @@ while ($row = mysqli_fetch_array($result)) {
         'item_name' => $row['item_name'],
         'special_request' => $row['special_request'],
         'serve_later' => $row['serve_later'],
+        'item_option' => $row['item_option'],
         'prepTime' => $row['prepTime'],
         'orderID' => $row['orderID']
     ];
@@ -45,33 +46,27 @@ mysqli_close($link);
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
         <title>Hot Completed Orders Page</title>
         <style>
-                    body {
-            padding-top: 120px;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .navbar {
-            background-color: #343a40;
-        }
-
-        .navbar-brand {
-            font-size: 40px;
-        }
-
-        .navbar-nav .nav-link {
-            color: #ffffff;
-        }
-
-        .navbar-nav .nav-link:hover {
-            color: #cccccc;
-        }
-        
-        .backnav {
-            position: absolute;
-            left: 0%;
-        }
-            
+            body {
+                padding-top: 120px;
+                justify-content: center;
+                align-items: center;
+            }
+            .navbar {
+                background-color: #343a40;
+            }
+            .navbar-brand {
+                font-size: 40px;
+            }
+            .navbar-nav .nav-link {
+                color: #ffffff;
+            }
+            .navbar-nav .nav-link:hover {
+                color: #cccccc;
+            }
+            .backnav {
+                position: absolute;
+                left: 0%;
+            }            
             .completed-btn {
                 position: relative;
                 padding: 5px;
@@ -98,16 +93,15 @@ mysqli_close($link);
     </head>
     <body>
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
-        <div class="container position-relative d-flex justify-content-center">
-            <button class="btn btn-outline-light backnav" onclick="navigateToBack()">
-                <i class="bi bi-arrow-left"></i> Back
-            </button>
-            <div class="navbar-brand">Completed Orders - Hot</div>
-        </div>
-    </nav>
-        
+            <div class="container position-relative d-flex justify-content-center">
+                <button class="btn btn-outline-light backnav" onclick="navigateToBack()">
+                    <i class="bi bi-arrow-left"></i> Back
+                </button>
+                <div class="navbar-brand">Completed Orders - Hot</div>
+            </div>
+        </nav>
+
         <div class="container">
-            <!-- Navigation Buttons -->
             <div class="row mb-3">
                 <div class="col-md-4"></div>
                 <div class="col-md-4 text-center">
@@ -122,7 +116,7 @@ mysqli_close($link);
                     <a class="btn btn-danger" id="clearBtn" onclick="confirmClear()">Clear</a>
                 </div>
             </div>
-            
+
             <div class="container" id="allTablesContainer">
                 <?php
                 foreach ($arrContent as $tableNo => $tableData) {
@@ -138,7 +132,8 @@ mysqli_close($link);
                             <thead>
                                 <tr>
                                     <th>Quantity</th>
-                                    <th>Dessert</th>
+                                    <th>Food Name</th>
+                                    <th>Doneness Level</th>
                                     <th>Special Request</th>
                                     <th>Serve Later</th>
                                     <th>Preparation Time (mins)</th>
@@ -149,6 +144,22 @@ mysqli_close($link);
                                     <tr data-order-id="<?php echo $order['orderID']; ?>">
                                         <td><?php echo $order['quantity']; ?></td>
                                         <td><?php echo $order['item_name']; ?></td>
+
+                                        <td><?php
+                                            if ($order['item_option'] == 2) {
+                                                echo 'Rare';
+                                            } else if ($order['item_option'] == 3) {
+                                                echo 'Medium Rare';
+                                            } else if ($order['item_option'] == 4) {
+                                                echo 'Medium';
+                                            } else if ($order['item_option'] == 5) {
+                                                echo 'Medium Well';
+                                            } else if ($order['item_option'] == 6) {
+                                                echo 'Well Done';
+                                            } else {
+                                                echo '-';
+                                            }
+                                            ?></td>
                                         <td><?php echo $order['special_request']; ?></td>
                                         <td>
                                             <?php
@@ -174,31 +185,29 @@ mysqli_close($link);
                     ?>
                 </div>
             </div>
+        </div>
 
-
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
-            <script>
-
+        <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+        <script>
                         $(document).ready(function () {
                             $('#categoryDropdown').change(function () {
                                 let selectedOption = $(this).val();
                                 let redirectUrl = '';
                                 switch (selectedOption) {
                                     case 'drinks':
-                                        redirectUrl = '/FYP_FoodOrderApp/Kitchen/drinksCompleted.php';
+                                        redirectUrl = '../Kitchen/drinksCompleted.php';
                                         break;
                                     case 'hot':
-                                        redirectUrl = '/FYP_FoodOrderApp/Kitchen/hotCompleted.php';
+                                        redirectUrl = '../Kitchen/hotCompleted.php';
                                         break;
                                     case 'dessert':
-                                        redirectUrl = '/FYP_FoodOrderApp/Kitchen/dessertCompleted.php';
+                                        redirectUrl = '../Kitchen/dessertCompleted.php';
                                         break;
                                     default:
                                         redirectUrl = '';
                                 }
 
-                                // Redirect to the selected page
                                 if (redirectUrl) {
                                     window.location.href = redirectUrl;
                                 }
@@ -211,14 +220,10 @@ mysqli_close($link);
 
                         function confirmClear() {
                             if (confirm("Are you sure you want to clear all completed orders?")) {
-                                $.post('/FYP_FoodOrderApp/Kitchen/clearOrders.php', {clear2: true}, function (response) {
+                                $.post('../Kitchen/clearOrders.php', {clear2: true}, function (response) {
                                     if (response.includes("success")) {
-                                        // Clear all tables from the view
                                         $('#allTablesContainer').empty();
-                                        // Show a message when all orders are cleared
                                         $('#allTablesContainer').html('<p class="text-center">All completed orders have been cleared.</p>');
-
-                                        // Clear timers from localStorage
                                         clearTimersFromLocalStorage();
                                     } else {
                                         alert("Error clearing orders: " + response);
@@ -235,24 +240,15 @@ mysqli_close($link);
                                 }
                             }
                         }
-                        
-                            document.getElementById('clearBtn').addEventListener('click', function (event) {
-        if (!confirm('Are you sure you want to clear completed orders?')) {
-            event.preventDefault();
-        }
-    });
-                        
-                                function navigateToBack() {
-                        // Redirect to the next category page (replace URL with desired destination)
-                        window.location.href = "/FYP_FoodOrderApp/Kitchen/hot.php"; // Change "kitchen.html" to the actual URL of the next page
-                    }
-                    
-                                function refreshPage() {
-                window.location.reload();
-            }
 
-            // Set the interval to refresh the page every 30 seconds (30000 milliseconds)
-            setInterval(refreshPage, 30000); 
-            </script>
+                        function navigateToBack() {
+                            window.location.href = "../Kitchen/hot.php";
+                        }
+
+                        function refreshPage() {
+                            window.location.reload();
+                        }
+                        setInterval(refreshPage, 30000);
+        </script>
     </body>
 </html>

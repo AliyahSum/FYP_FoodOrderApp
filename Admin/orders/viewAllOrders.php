@@ -1,11 +1,11 @@
 <?php
 session_start();
-$host = "localhost";
-$user = "root";
-$password = "";
-$db = "mydb";
-
-$link = mysqli_connect($host, $user, $password, $db) or die(mysqli_connect_error());
+    $host = "localhost";
+    $user = "root";
+    $password = "";
+    $db = "mydb";
+    
+    $link = mysqli_connect($host, $user, $password, $db) or die(mysqli_connect_error());
 
 $query = "SELECT *
         FROM orders
@@ -14,7 +14,8 @@ $query = "SELECT *
         INNER JOIN menu_item ON menu_order.menuitemID = menu_item.menuitemID
         INNER JOIN category ON category.categoryID = menu_item.categoryID
         WHERE orders.orderStatusHot = 0 OR orders.orderStatusDrink = 0 OR orders.orderStatusDessert = 0
-        ORDER BY orders.orderDateTime";
+        ORDER BY orders.orderDateTime DESC";
+
 $result = mysqli_query($link, $query) or die(mysqli_error($link));
 
 $arrContent = [];
@@ -55,8 +56,7 @@ mysqli_close($link);
                 padding-top: 120px;
                 justify-content: center;
                 align-items: center;
-            }
-            
+            }            
             .navbar {
                 background-color: #343a40;
             }
@@ -75,8 +75,7 @@ mysqli_close($link);
                      
             .serve-later {
                 color: blue;
-            }
-            
+            }            
             .table-header h3 {
                 margin: 0;
                 margin-bottom: 5px;
@@ -90,8 +89,7 @@ mysqli_close($link);
             .table-header .order-id {
                 margin: 0;
                 font-size: 1rem;
-            }
-            
+            }            
             .timer-cell {
                 font-weight: bold;
             }
@@ -116,30 +114,30 @@ mysqli_close($link);
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav">
                         <li class="nav-item">
-                            <a class="nav-link" href="/FYP_FoodOrderApp/Login/admin.php">Home</a>
+                            <a class="nav-link" href="../../Login/admin.php">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/FYP_FoodOrderApp/Admin/tables/tables_admin.php">Tables</a>
+                            <a class="nav-link" href="../../Admin/tables/tables_admin.php">Tables</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/FYP_FoodOrderApp/Admin/user/viewUsers.php">Users</a>
+                            <a class="nav-link" href="../../Admin/user/viewUsers.php">Users</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/FYP_FoodOrderApp/Admin/menu/viewMenu.php">Menu</a>
+                            <a class="nav-link" href="../../Admin/menu/viewMenu.php">Menu</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/FYP_FoodOrderApp/Admin/orders/viewAllOrders.php">View All Orders</a>
+                            <a class="nav-link" href="../../Admin/orders/viewAllOrders.php">View All Orders</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/FYP_FoodOrderApp/Admin/reports/report.php">Reports</a>
+                            <a class="nav-link" href="../../Admin/reports/report.php">Reports</a>
                         </li>
                     </ul>
                     <ul class="navbar-nav ms-auto">
                         <li class="nav-item">
-                            <a class="btn btn-outline-success compnav" href="/FYP_FoodOrderApp/Admin/orders/viewCompletedOrders.php">Completed Orders</a>
+                            <a class="btn btn-outline-success compnav" href="../../Admin/orders/viewCompletedOrders.php">Completed Orders</a>
                         </li>                  
                         <li class="nav-item">
-                            <a class="btn btn-outline-light" id="logoutButton" href="/FYP_FoodOrderApp/index.php">Logout</a>
+                            <a class="btn btn-outline-light" id="logoutButton" href="../../index.php">Logout</a>
                         </li>
                     </ul>
                 </div>
@@ -162,9 +160,6 @@ mysqli_close($link);
                                     <h3>Table No. <?php echo $tableNo; ?></h3>                                    
                                     <h5 class="order-id">Order ID: <?php echo $orderID; ?></h5>
                                     <span class="order-time"><?php echo $orderData['orderDateTime']; ?></span>
-                                </div>
-                                <div class="col-md-4 text-end">
-                                    <button type="button" class="btn btn-primary serve-all-btn" data-table-no="<?php echo $tableNo; ?>" data-order-id="<?php echo $orderID; ?>">Serve All</button>
                                 </div>
                             </div>
                             <table class="table" id="orderTable_<?php echo $tableNo; ?>_<?php echo $orderID; ?>">
@@ -253,42 +248,15 @@ mysqli_close($link);
 
                     updateTimer();
                 });                
-
-                $('.serve-all-btn').click(function () {
-                    let tableNo = $(this).data('table-no');
-                    let orderID = $(this).data('order-id');
-                    let $tableContainer = $(`#table-container-${tableNo}-${orderID}`);
-                    let orderIDs = [orderID];
-
-                    if (orderIDs.length > 0) {
-                        if (confirm(`Are you sure you want to serve all orders for Table ${tableNo}?`)) {
-                            $.post('/FYP_FoodOrderApp/Kitchen/updateOrderStatusDessert.php', {orderIDs: orderIDs}, function (response) {
-                                if (response.includes("successfully")) {
-                                    $tableContainer.fadeOut(500, function () {
-                                        $(this).remove();
-                                    });
-                                    alert("Orders served successfully.");
-
-                                    const servedOrderIDs = JSON.parse(response.split("successfully")[1]);
-                                    servedOrderIDs.forEach(orderId => {
-                                        localStorage.removeItem(`timer_${orderId}`);
-                                    });
-                                } else {
-                                    console.error("Error updating order status: " + response);
-                                    alert("Error updating order status. Please try again.");
-                                }
-                            });
-                        }
-                    } else {
-                        console.error("No orders found for the selected table.");
-                        alert("No orders found for the selected table.");
-                    }
-                });                
             });
-
             function navigateToBack() {
-                window.location.href = "/FYP_FoodOrderApp/Kitchen/foodCategory.php";
+                window.location.href = "../../Kitchen/foodCategory.php";
             }
+            
+            function refreshPage() {
+                window.location.reload();
+            }
+            setInterval(refreshPage, 10000); 
         </script>
     </body>
 </html>

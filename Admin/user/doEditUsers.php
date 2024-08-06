@@ -14,38 +14,31 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $user = "root";
     $password = "";
     $db = "mydb";
-
+    
     $link = mysqli_connect($host, $user, $password, $db) or die(mysqli_connect_error());
 
     $message = "ERROR:";
 
-    // Password validation function
     function validatePassword($password) {
-        return preg_match('/[A-Z]/', $password) && // At least one uppercase letter
-                preg_match('/[a-z]/', $password) && // At least one lowercase letter
-                preg_match('/[0-9]/', $password) && // At least one digit
-                preg_match('/[!@#$%^&*()_\-+=\[\]{};:"|,.<>\/?~`]/', $password);      // At least one special character
+        return preg_match('/[A-Z]/', $password) && 
+                preg_match('/[a-z]/', $password) && 
+                preg_match('/[0-9]/', $password) && 
+                preg_match('/[!@#$%^&*()_\-+=\[\]{};:"|,.<>\/?~`]/', $password);
     }
 
     if ($action == "Edit") {
-        // Check if passwords match
         if ($pass !== $cfmpassword) {
             $message .= " Passwords do not match.";
         }
-        // Validate password length
         elseif (strlen($pass) < 8) {
             $message .= " Password must be 8 characters or more.";
         }
-
-        // Validate password complexity
         elseif (!validatePassword($pass)) {
             $message .= " Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character.";
         }
-        // Validate date of birth
         elseif (strtotime($dob) > time()) {
             $message .= " Date of Birth cannot be a future date.";
         } else {
-            // Check if staff ID exists
             $query = "SELECT * FROM staff WHERE staffID = ?";
             $stmt = $link->prepare($query);
             $stmt->bind_param("s", $staffID);
@@ -54,7 +47,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $hashed_password = sha1($pass);
 
             if ($result->num_rows > 0) {
-                // Update existing staff member
                 $sqlUpdate = "UPDATE staff SET password = ?, first_name = ?, last_name = ?, DOB = ?, email = ?, isAvailable = ? WHERE staffID = ?";
                 $stmt = $link->prepare($sqlUpdate);
                 $stmt->bind_param("sssssis", $hashed_password, $fname, $lname, $dob, $email, $isAvailable, $staffID);
@@ -67,11 +59,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             } else {
                 $message .= " Staff ID does not exist.";
             }
-
             $stmt->close();
         }
     } elseif ($action == "Delete") {
-        // Delete the user
         $isDelete = 1;
         $sqlUpdate = "UPDATE staff SET isDelete = ? WHERE staffID = ?";
         $stmt = $link->prepare($sqlUpdate);
@@ -83,23 +73,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
         $stmt->close();
     }
-
     mysqli_close($link);
 } else {
     $message = "Invalid request method. Check if any of the fields are empty.";
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Update Users</title>
-        <!-- Bootstrap CSS -->
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-        <!-- Custom CSS -->
         <style>
             body {
                 padding-top: 120px;
@@ -139,22 +125,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav">
                         <li class="nav-item">
-                            <a class="nav-link" href="/FYP_FoodOrderApp/Login/admin.php">Home</a>
+                            <a class="nav-link" href="../../Login/admin.php">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/FYP_FoodOrderApp/Admin/tables/tables_admin.php">Tables</a>
+                            <a class="nav-link" href="../../Admin/tables/tables_admin.php">Tables</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/FYP_FoodOrderApp/Admin/user/viewUsers.php">Users</a>
+                            <a class="nav-link" href="../../Admin/user/viewUsers.php">Users</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/FYP_FoodOrderApp/Admin/menu/viewMenu.php">Menu</a>
+                            <a class="nav-link" href="../../Admin/menu/viewMenu.php">Menu</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/FYP_FoodOrderApp/Admin/orders/viewAllOrders.php">View All Orders</a>
+                            <a class="nav-link" href="../../Admin/orders/viewAllOrders.php">View All Orders</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/FYP_FoodOrderApp/Admin/reports/report.php">Reports</a>
+                            <a class="nav-link" href="../../Admin/reports/report.php">Reports</a>
                         </li>
                     </ul>
                     <ul class="navbar-nav ms-auto">
@@ -162,29 +148,27 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             <a class="btn btn-outline-light backnav" onclick="history.back()">Back</a>
                         </li>
                         <li class="nav-item">
-                            <a class="btn btn-outline-light logOutNav" id="logoutButton" href="/FYP_FoodOrderApp/index.php">Logout</a>
+                            <a class="btn btn-outline-light logOutNav" id="logoutButton" href="../../index.php">Logout</a>
                         </li>
                     </ul>
                 </div>
             </div>
         </nav>
+        
         <h1>Updating Users...</h1>
         <h5>
             <?php echo $message; ?>
         </h5>
     </body>
 </html>
+
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-// Add event listener to the logout button
 document.getElementById('logoutButton').addEventListener('click', function (event) {
-    // Prevent default action
     event.preventDefault();
-    // Show confirmation dialog
     if (confirm('Are you sure you want to logout?')) {
-        // If confirmed, proceed with the logout
-        window.location.href = '/FYP_FoodOrderApp/index.php';
+        window.location.href = '../../index.php';
     }
 });
 </script>

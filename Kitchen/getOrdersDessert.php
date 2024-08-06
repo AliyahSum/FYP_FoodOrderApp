@@ -1,13 +1,12 @@
 <!DOCTYPE html>
 <?php
 session_start();
-$host = "localhost";
-$user = "root";
-$password = "";
-$db = "mydb";
-
-$link = mysqli_connect($host, $user, $password, $db) or die(mysqli_connect_error());
-
+    $host = "localhost";
+    $user = "root";
+    $password = "";
+    $db = "mydb";
+    
+    $link = mysqli_connect($host, $user, $password, $db) or die(mysqli_connect_error());
 $query = "SELECT *
         FROM orders
         INNER JOIN cust_table ON orders.tableID = cust_table.tableID
@@ -16,6 +15,7 @@ $query = "SELECT *
         INNER JOIN category ON category.categoryID = menu_item.categoryID
         WHERE orders.orderStatusDessert = 0 AND stationID = 'STN3'
         ORDER BY menu_order.orderID ASC";
+
 $result = mysqli_query($link, $query) or die(mysqli_error($link));
 
 $arrContent = [];
@@ -57,7 +57,7 @@ foreach ($arrContent as $tableNo => $tableData) {
             <thead>
                 <tr>
                     <th>Quantity</th>
-                    <th>Dessert</th>
+                    <th>Food Name</th>
                     <th>Special Request</th>
                     <th>Serve Later</th>
                     <th>Preparation Time (mins)</th>
@@ -66,7 +66,7 @@ foreach ($arrContent as $tableNo => $tableData) {
             </thead>
             <tbody>
                 <?php foreach ($tableData['orders'] as $order) { ?>
-                    <tr data-order-id="<?php echo $order['orderID']; ?>" data-prep-time="<?php echo $order['prepTime']; ?>">
+                    <tr data-order-id="<?php echo $order['orderID']; ?>" data-menuorder-id="<?php echo $order['menuorderID']; ?>" data-prep-time="<?php echo $order['prepTime']; ?>">
                         <td><?php echo $order['quantity']; ?></td>
                         <td class="dessert-name" data-menuorder-id="<?php echo $order['menuorderID']; ?>"><?php echo $order['item_name']; ?></td>
                         <td><?php echo $order['special_request']; ?></td>

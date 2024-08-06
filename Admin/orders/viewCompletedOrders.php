@@ -1,20 +1,20 @@
 <?php
 session_start();
-$host = "localhost";
-$user = "root";
-$password = "";
-$db = "mydb";
-
-$link = mysqli_connect($host, $user, $password, $db) or die(mysqli_connect_error());
+    $host = "localhost";
+    $user = "root";
+    $password = "";
+    $db = "mydb";
+    
+    $link = mysqli_connect($host, $user, $password, $db) or die(mysqli_connect_error());
 
 $query = "SELECT *
-        FROM orders
-        INNER JOIN cust_table ON orders.tableID = cust_table.tableID
-        INNER JOIN menu_order ON orders.orderID = menu_order.orderID
-        INNER JOIN menu_item ON menu_order.menuitemID = menu_item.menuitemID
-        INNER JOIN category ON category.categoryID = menu_item.categoryID
-        WHERE orders.orderStatusHot = 1 OR orders.orderStatusDrink = 1 OR orders.orderStatusDessert = 1 OR orders.orderStatusHot = 2 OR orders.orderStatusDrink = 2 OR orders.orderStatusDessert = 2
-        ORDER BY orders.orderDateTime";
+            FROM orders
+            INNER JOIN cust_table ON orders.tableID = cust_table.tableID
+            INNER JOIN menu_order ON orders.orderID = menu_order.orderID
+            INNER JOIN menu_item ON menu_order.menuitemID = menu_item.menuitemID
+            INNER JOIN category ON category.categoryID = menu_item.categoryID
+            WHERE orders.orderStatusHot = 1 OR orders.orderStatusDrink = 1 OR orders.orderStatusDessert = 1 OR orders.orderStatusHot = 2 OR orders.orderStatusDrink = 2 OR orders.orderStatusDessert = 2
+            ORDER BY orders.orderDateTime";
 $result = mysqli_query($link, $query) or die(mysqli_error($link));
 
 $arrContent = [];
@@ -56,7 +56,6 @@ mysqli_close($link);
                 justify-content: center;
                 align-items: center;
             }
-
             .navbar {
                 background-color: #343a40;
             }
@@ -68,15 +67,13 @@ mysqli_close($link);
             }
             .navbar-nav .nav-link:hover {
                 color: #cccccc;
-            }
-            
+            }            
             .ordernav {
                 margin-right: 10px;
             }                       
             .serve-later {
                 color: blue;
             }
-
             .table-header h3 {
                 margin: 0;
                 margin-bottom: 5px;
@@ -103,30 +100,30 @@ mysqli_close($link);
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav">
                         <li class="nav-item">
-                            <a class="nav-link" href="/FYP_FoodOrderApp/Login/admin.php">Home</a>
+                            <a class="nav-link" href="../../Login/admin.php">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/FYP_FoodOrderApp/Admin/tables/tables_admin.php">Tables</a>
+                            <a class="nav-link" href="../../Admin/tables/tables_admin.php">Tables</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/FYP_FoodOrderApp/Admin/user/viewUsers.php">Users</a>
+                            <a class="nav-link" href="../../Admin/user/viewUsers.php">Users</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/FYP_FoodOrderApp/Admin/menu/viewMenu.php">Menu</a>
+                            <a class="nav-link" href="../../Admin/menu/viewMenu.php">Menu</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/FYP_FoodOrderApp/Admin/orders/viewAllOrders.php">View All Orders</a>
+                            <a class="nav-link" href="../../Admin/orders/viewAllOrders.php">View All Orders</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/FYP_FoodOrderApp/Admin/reports/report.php">Reports</a>
+                            <a class="nav-link" href="../../Admin/reports/report.php">Reports</a>
                         </li>
                     </ul>
                     <ul class="navbar-nav ms-auto">
                         <li class="nav-item">
-                            <a class="btn btn-outline-success ordernav" href="/FYP_FoodOrderApp/Admin/orders/viewAllOrders.php">View All Orders</a>
+                            <a class="btn btn-outline-success ordernav" href="../../Admin/orders/viewAllOrders.php">View All Orders</a>
                         </li>
                         <li class="nav-item">
-                            <a class="btn btn-outline-light" id="logoutButton" href="/FYP_FoodOrderApp/index.php">Logout</a>
+                            <a class="btn btn-outline-light" id="logoutButton" href="../../index.php">Logout</a>
                         </li>
                     </ul>
                 </div>
@@ -195,6 +192,12 @@ mysqli_close($link);
         </div>
 
         <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>        
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>   
+        <script>
+        function refreshPage() {
+            window.location.reload();
+        }
+            setInterval(refreshPage, 30000); 
+        </script>
     </body>
 </html>

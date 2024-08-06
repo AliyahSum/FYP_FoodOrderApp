@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <?php
 session_start();
-$host = "localhost";
-$user = "root";
-$password = "";
-$db = "mydb";
-
-$link = mysqli_connect($host, $user, $password, $db) or die(mysqli_connect_error());
+    $host = "localhost";
+    $user = "root";
+    $password = "";
+    $db = "mydb";
+    
+    $link = mysqli_connect($host, $user, $password, $db) or die(mysqli_connect_error());
 
 $query = "SELECT *
         FROM orders
@@ -58,7 +58,7 @@ foreach ($arrContent as $tableNo => $tableData) {
             <thead>
                 <tr>
                     <th>Quantity</th>
-                    <th>Drink</th>
+                    <th>Food Name</th>
                     <th>Temp</th>
                     <th>Special Request</th>
                     <th>Serve Later</th>
@@ -72,13 +72,12 @@ foreach ($arrContent as $tableNo => $tableData) {
                         <td><?php echo $order['quantity']; ?></td>
                         <td class="drink-name" data-menuorder-id="<?php echo $order['menuorderID']; ?>"><?php echo $order['item_name']; ?></td>
                         <td><?php if ($order['item_option'] == 2){ 
-                                        echo 'Hot';
-                                  }else if ($order['item_option'] == 3){
-                                        echo 'Cold';
-                                  } else {
-                                      echo '-';
-                                  }
-                        
+                            echo 'Hot';
+                            }else if ($order['item_option'] == 3){
+                                echo 'Cold';
+                                } else {
+                                    echo '-';
+                                }
                         ?></td>
                         <td><?php echo $order['special_request']; ?></td>
                         <td>

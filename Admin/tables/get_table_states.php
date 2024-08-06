@@ -1,14 +1,11 @@
 <?php
-// Database configuration
-$host = "localhost";
-$user = "root";
-$password = "";
-$db = "mydb";
+    $host = "localhost";
+    $user = "root";
+    $password = "";
+    $db = "mydb";
+    
+    $link = mysqli_connect($host, $user, $password, $db) or die(mysqli_connect_error());
 
-// Create connection
-$link = mysqli_connect($host, $user, $password, $db) or die(mysqli_connect_error());
-
-// Query to get table states
 $query = "SELECT table_num, isAvailable
           FROM cust_table";
 

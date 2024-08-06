@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <?php
 session_start();
-$host = "localhost";
-$user = "root";
-$password = "";
-$db = "mydb";
-
-$link = mysqli_connect($host, $user, $password, $db) or die(mysqli_connect_error());
+    $host = "localhost";
+    $user = "root";
+    $password = "";
+    $db = "mydb";
+    
+    $link = mysqli_connect($host, $user, $password, $db) or die(mysqli_connect_error());
 
 $query = "SELECT *
         FROM orders
@@ -39,6 +39,7 @@ while ($row = mysqli_fetch_array($result)) {
         'orderID' => $row['orderID'],
         'menuorderID' => $row['menuorderID']
     ];
+    
 }
 mysqli_close($link);
 
@@ -58,7 +59,7 @@ foreach ($arrContent as $tableNo => $tableData) {
             <thead>
                 <tr>
                     <th>Quantity</th>
-                    <th>Hot</th>
+                    <th>Food Name</th>
                     <th>Doneness Level</th>
                     <th>Special Request</th>
                     <th>Serve Later</th>
@@ -68,7 +69,7 @@ foreach ($arrContent as $tableNo => $tableData) {
             </thead>
             <tbody>
                 <?php foreach ($tableData['orders'] as $order) { ?>
-                    <tr data-order-id="<?php echo $order['orderID']; ?>" data-prep-time="<?php echo $order['prepTime']; ?>">
+                    <tr data-order-id="<?php echo $order['orderID']; ?>" data-menuorder-id="<?php echo $order['menuorderID']; ?>" data-prep-time="<?php echo $order['prepTime']; ?>">
                         <td><?php echo $order['quantity']; ?></td>
                         <td class="hot-name" data-menuorder-id="<?php echo $order['menuorderID']; ?>"><?php echo $order['item_name']; ?></td>
                         <td><?php

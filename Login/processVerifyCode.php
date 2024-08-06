@@ -9,14 +9,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         echo "
         <script>
         alert('Verification successful. Please reset your password.');
-        document.location.href = '/FYP_FoodOrderApp/Login/resetPassword.php';
+        document.location.href = '../Login/resetPassword.php';
         </script>
         ";
     } else {
         echo "
         <script>
         alert('Invalid verification code. Please try again.');
-        document.location.href = '/FYP_FoodOrderApp/Login/verifyCode.php';
+        document.location.href = '../Login/verifyCode.php';
         </script>
         ";
     }

@@ -6,7 +6,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     $user = "root";
     $password = "";
     $db = "mydb";
-
+    
     $link = mysqli_connect($host, $user, $password, $db) or die(mysqli_connect_error());
 
     $query = "UPDATE menu_item SET isDelete = 0 WHERE menuitemID = ?";
@@ -22,11 +22,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     $stmt->close();
     mysqli_close($link);
 
-    // Redirect back to viewDeletedMenu.php with a success or error message
     header("Location: viewDeletedMenu.php?message=" . urlencode($message));
     exit();
 } else {
-    // Invalid request method
     header("Location: viewDeletedMenu.php?message=" . urlencode("Invalid request method."));
     exit();
 }

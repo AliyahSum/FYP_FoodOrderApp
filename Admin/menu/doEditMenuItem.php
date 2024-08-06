@@ -8,8 +8,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $user = "root";
     $password = "";
     $db = "mydb";
-
+    
     $link = mysqli_connect($host, $user, $password, $db) or die(mysqli_connect_error());
+    
     $message = "ERROR:";
     $target_dir = "../../images/";
 
@@ -26,7 +27,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $old_target_file = $target_dir . basename($oldImage);
         $new_target_file = $target_dir . basename($newImage);
-        echo $new_target_file;
         $uploadOk = 1;
         $imageFileType = strtolower(pathinfo($new_target_file, PATHINFO_EXTENSION));
 
@@ -87,17 +87,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Update Menu Item</title>
-        <!-- Bootstrap CSS -->
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-        <!-- Custom CSS -->
         <style>
             body {
                 padding-top: 120px;
@@ -137,22 +134,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav">
                         <li class="nav-item">
-                            <a class="nav-link" href="/FYP_FoodOrderApp/Login/admin.php">Home</a>
+                            <a class="nav-link" href="../../Login/admin.php">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/FYP_FoodOrderApp/Admin/tables/tables_admin.php">Tables</a>
+                            <a class="nav-link" href="../../Admin/tables/tables_admin.php">Tables</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/FYP_FoodOrderApp/Admin/user/viewUsers.php">Users</a>
+                            <a class="nav-link" href="../../Admin/user/viewUsers.php">Users</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/FYP_FoodOrderApp/Admin/menu/viewMenu.php">Menu</a>
+                            <a class="nav-link" href="../../Admin/menu/viewMenu.php">Menu</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/FYP_FoodOrderApp/Admin/orders/viewAllOrders.php">View All Orders</a>
+                            <a class="nav-link" href="../../Admin/orders/viewAllOrders.php">View All Orders</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/FYP_FoodOrderApp/Admin/reports/report.php">Reports</a>
+                            <a class="nav-link" href="../../Admin/reports/report.php">Reports</a>
                         </li>
                     </ul>
                     <ul class="navbar-nav ms-auto">
@@ -160,7 +157,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             <a class="btn btn-outline-light backnav" onclick="history.back()">Back</a>
                         </li>
                         <li class="nav-item">
-                            <a class="btn btn-outline-light logOutNav" id="logoutButton" href="/FYP_FoodOrderApp/index.php">Logout</a>
+                            <a class="btn btn-outline-light logOutNav" id="logoutButton" href="../../index.php">Logout</a>
                         </li>
                     </ul>
                 </div>
@@ -173,14 +170,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-                                // Add event listener to the logout button
-                                document.getElementById('logoutButton').addEventListener('click', function (event) {
-                                    // Prevent default action
-                                    event.preventDefault();
-                                    // Show confirmation dialog
-                                    if (confirm('Are you sure you want to logout?')) {
-                                        // If confirmed, proceed with the logout
-                                        window.location.href = '/FYP_FoodOrderApp/index.php';
-                                    }
-                                });
+    document.getElementById('logoutButton').addEventListener('click', function (event) {
+        event.preventDefault();
+        if (confirm('Are you sure you want to logout?')) {
+            window.location.href = '../../index.php';
+        }
+    });
 </script>

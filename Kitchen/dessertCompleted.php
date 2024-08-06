@@ -1,11 +1,11 @@
 <?php
 session_start();
-$host = "localhost";
-$user = "root";
-$password = "";
-$db = "mydb";
-
-$link = mysqli_connect($host, $user, $password, $db) or die(mysqli_connect_error());
+    $host = "localhost";
+    $user = "root";
+    $password = "";
+    $db = "mydb";
+    
+    $link = mysqli_connect($host, $user, $password, $db) or die(mysqli_connect_error());
 
 $query = "SELECT *
         FROM orders
@@ -14,7 +14,7 @@ $query = "SELECT *
         INNER JOIN menu_item ON menu_order.menuitemID = menu_item.menuitemID
         INNER JOIN category ON category.categoryID = menu_item.categoryID
         WHERE orders.orderStatusDessert = 1 AND stationID = 'STN3'
-        ORDER BY menu_order.orderID ASC";
+        ORDER BY menu_order.orderID";
 
 $result = mysqli_query($link, $query) or die(mysqli_error($link));
 
@@ -39,6 +39,7 @@ while ($row = mysqli_fetch_array($result)) {
 }
 mysqli_close($link);
 ?>
+
 <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -46,32 +47,27 @@ mysqli_close($link);
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
         <title>Dessert Completed Orders Page</title>
         <style>
-                                body {
-            padding-top: 120px;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .navbar {
-            background-color: #343a40;
-        }
-
-        .navbar-brand {
-            font-size: 40px;
-        }
-
-        .navbar-nav .nav-link {
-            color: #ffffff;
-        }
-
-        .navbar-nav .nav-link:hover {
-            color: #cccccc;
-        }
-        
-        .backnav {
-            position: absolute;
-            left: 0%;
-        }
+            body {
+                padding-top: 120px;
+                justify-content: center;
+                align-items: center;
+            }
+            .navbar {
+                background-color: #343a40;
+            }
+            .navbar-brand {
+                font-size: 40px;
+            }
+            .navbar-nav .nav-link {
+                color: #ffffff;
+            }
+            .navbar-nav .nav-link:hover {
+                color: #cccccc;
+            }
+            .backnav {
+                position: absolute;
+                left: 0%;
+            }
             .completed-btn {
                 position: relative;
                 padding: 5px;
@@ -97,16 +93,16 @@ mysqli_close($link);
         </style>
     </head>
     <body>
-                            <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
-        <div class="container position-relative d-flex justify-content-center">
-            <button class="btn btn-outline-light backnav" onclick="navigateToBack()">
-                <i class="bi bi-arrow-left"></i> Back
-            </button>
-            <div class="navbar-brand">Completed Orders - Dessert</div>
-        </div>
-    </nav>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+            <div class="container position-relative d-flex justify-content-center">
+                <button class="btn btn-outline-light backnav" onclick="navigateToBack()">
+                    <i class="bi bi-arrow-left"></i> Back
+                </button>
+                <div class="navbar-brand">Completed Orders - Dessert</div>
+            </div>
+        </nav>
+        
         <div class="container">
-            <!-- Navigation Buttons -->
             <div class="row mb-3">
                 <div class="col-md-4"></div>
                 <div class="col-md-4 text-center">
@@ -121,29 +117,30 @@ mysqli_close($link);
                     <a class="btn btn-danger" id="clearBtn" onclick="confirmClear()">Clear</a>
                 </div>
             </div>
+            
             <div class="container" id="allTablesContainer">
                 <?php
-                foreach ($arrContent as $tableNo => $tableData) {
+                foreach ($arrContent as $orderID => $orderData) {
                     ?>
-                    <div class="table-container" id="table-container-<?php echo $tableNo; ?>">
+                    <div class="table-container" id="table-container-<?php echo $orderID; ?>">
                         <div class="row align-items-center mb-2">
                             <div class="col-md-8 table-header">
-                                <h3>Table No. <?php echo $tableNo; ?></h3>
-                                <span class="order-time"><?php echo $tableData['orderDateTime']; ?></span>
+                                <h3>Table No. <?php echo $orderData['table_num']; ?></h3>
+                                <span class="order-time"><?php echo $orderData['orderDateTime']; ?></span>
                             </div>
                         </div>
-                        <table class="table" id="orderTable_<?php echo $tableNo; ?>">
+                        <table class="table" id="orderTable_<?php echo $orderID; ?>">
                             <thead>
                                 <tr>
                                     <th>Quantity</th>
-                                    <th>Dessert</th>
+                                    <th>Food Name</th>
                                     <th>Special Request</th>
                                     <th>Serve Later</th>
                                     <th>Preparation Time (mins)</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php foreach ($tableData['orders'] as $order) { ?>
+                                <?php foreach ($orderData['orders'] as $order) { ?>
                                     <tr data-order-id="<?php echo $order['orderID']; ?>">
                                         <td><?php echo $order['quantity']; ?></td>
                                         <td><?php echo $order['item_name']; ?></td>
@@ -162,96 +159,77 @@ mysqli_close($link);
                                 <?php } ?>
                             </tbody>
                         </table>
-                        <?php
-                    }
-                    if (empty($arrContent)) {
-                        ?>
-                        <p>No orders found.</p>
-                        <?php
-                    }
+                    </div>
+                    <?php
+                }
+                if (empty($arrContent)) {
                     ?>
-                </div>
+                    <p>No orders found.</p>
+                    <?php
+                }
+                ?>
             </div>
-
-
-            <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-            <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-            <script>
-
-                        $(document).ready(function () {
-                            $('#categoryDropdown').change(function () {
-                                let selectedOption = $(this).val();
-                                let redirectUrl = '';
-                                switch (selectedOption) {
-                                    case 'drinks':
-                                        redirectUrl = '/FYP_FoodOrderApp/Kitchen/drinksCompleted.php';
-                                        break;
-                                    case 'hot':
-                                        redirectUrl = '/FYP_FoodOrderApp/Kitchen/hotCompleted.php';
-                                        break;
-                                    case 'dessert':
-                                        redirectUrl = '/FYP_FoodOrderApp/Kitchen/dessertCompleted.php';
-                                        break;
-                                    default:
-                                        redirectUrl = '';
-                                }
-
-                                // Redirect to the selected page
-                                if (redirectUrl) {
-                                    window.location.href = redirectUrl;
-                                }
-                            });
-                        });
-
-                        function goBack() {
-                            history.back();
-                        }
-
-                        function confirmClear() {
-                            if (confirm("Are you sure you want to clear all completed orders?")) {
-                                $.post('/FYP_FoodOrderApp/Kitchen/clearOrders.php', {clear3: true}, function (response) {
-                                    if (response.includes("success")) {
-                                        // Clear all tables from the view
-                                        $('#allTablesContainer').empty();
-                                        // Show a message when all orders are cleared
-                                        $('#allTablesContainer').html('<p class="text-center">All completed orders have been cleared.</p>');
-
-                                        // Clear timers from localStorage
-                                        clearTimersFromLocalStorage();
-                                    } else {
-                                        alert("Error clearing orders: " + response);
-                                    }
-                                });
-                            }
-                        }
-
-                        function clearTimersFromLocalStorage() {
-                            for (let i = 0; i < localStorage.length; i++) {
-                                const key = localStorage.key(i);
-                                if (key.startsWith('timer_')) {
-                                    localStorage.removeItem(key);
-                                }
-                            }
-                        }
-                        
-                            // Add event listener to the logout button
-    document.getElementById('clearBtn').addEventListener('click', function (event) {
-        if (!confirm('Are you sure you want to clear completed orders?')) {
-            event.preventDefault();
-        }
-    });
-                        
-                                            function navigateToBack() {
-            // Redirect to the next category page (replace URL with desired destination)
-            window.location.href = "/FYP_FoodOrderApp/Kitchen/dessert.php"; // Change "kitchen.html" to the actual URL of the next page
-        }
+        </div>
         
-                    function refreshPage() {
+        <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+        <script>
+            $(document).ready(function () {
+                $('#categoryDropdown').change(function () {
+                    let selectedOption = $(this).val();
+                    let redirectUrl = '';
+                    switch (selectedOption) {
+                        case 'drinks':
+                            redirectUrl = '../Kitchen/drinksCompleted.php';
+                            break;
+                        case 'hot':
+                            redirectUrl = '../Kitchen/hotCompleted.php';
+                            break;
+                        case 'dessert':
+                            redirectUrl = '../Kitchen/dessertCompleted.php';
+                            break;
+                        default:
+                            redirectUrl = '';
+                    }
+                    
+                    if (redirectUrl) {
+                        window.location.href = redirectUrl;
+                    }
+                });
+            });
+            
+            function goBack() {
+                history.back();
+            }            
+            function confirmClear() {
+                if (confirm("Are you sure you want to clear all completed orders?")) {
+                    $.post('../Kitchen/clearOrders.php', {clear3: true}, function (response) {
+                        if (response.includes("success")) {
+                            $('#allTablesContainer').empty();
+                            $('#allTablesContainer').html('<p class="text-center">All completed orders have been cleared.</p>');
+                            clearTimersFromLocalStorage();
+                        } else {
+                            alert("Error clearing orders: " + response);
+                        }
+                    });
+                }
+            }            
+            function clearTimersFromLocalStorage() {
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    if (key.startsWith('timer_')) {
+                        localStorage.removeItem(key);
+                    }
+                }
+            }
+            
+            function navigateToBack() {
+                window.location.href = "../Kitchen/dessert.php";
+            }
+            function refreshPage() {
                 window.location.reload();
             }
-
-            // Set the interval to refresh the page every 30 seconds (30000 milliseconds)
             setInterval(refreshPage, 30000); 
-            </script>
+        </script>
     </body>
 </html>

@@ -1,11 +1,11 @@
 <?php
 session_start();
-$host = "localhost";
-$user = "root";
-$password = "";
-$db = "mydb";
-
-$link = mysqli_connect($host, $user, $password, $db) or die(mysqli_connect_error());
+    $host = "localhost";
+    $user = "root";
+    $password = "";
+    $db = "mydb";
+    
+    $link = mysqli_connect($host, $user, $password, $db) or die(mysqli_connect_error());
 
 $query = "SELECT *
         FROM orders
@@ -59,28 +59,22 @@ mysqli_close($link);
                 justify-content: center;
                 align-items: center;
             }
-
             .navbar {
                 background-color: #343a40;
             }
-
             .navbar-brand {
                 font-size: 40px;
             }
-
             .navbar-nav .nav-link {
                 color: #ffffff;
             }
-
             .navbar-nav .nav-link:hover {
                 color: #cccccc;
             }
-
             .backnav {
                 position: absolute;
                 left: 0%;
             }
-
             .completed-btn {
                 position: relative;
                 padding: 5px;
@@ -88,57 +82,44 @@ mysqli_close($link);
                 left: 50%;
                 transform: translateX(-50%);
             }
-
             .cancel-text {
                 text-decoration: line-through;
             }
-
             .order-gone {
                 display: none;
             }
-
             .serve-later {
                 color: blue;
             }
-
             .table-header {
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
             }
-
             .table-header h3 {
                 margin: 0;
             }
-
             .table-header .order-time {
                 font-size: 1.2rem;
                 color: grey;
             }
-
             .timer-cell {
                 font-weight: bold;
             }
-
             .row-green {
                 background-color: #d4edda;
             }
-
             .row-yellow {
                 background-color: #fff3cd;
             }
-
             .row-red {
                 background-color: #f8d7da;
             }
-
             audio {
                 opacity: 0%;
             }
-
         </style>
     </head>
-
     <body>
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
             <div class="container position-relative d-flex justify-content-center">
@@ -150,7 +131,6 @@ mysqli_close($link);
         </nav>
 
         <div class="container">
-            <!-- Navigation Buttons -->
             <div id="newOrderAlert" class="alert alert-success" role="alert" style="display:none;">
                 New orders have arrived!
             </div>
@@ -165,28 +145,22 @@ mysqli_close($link);
                     </select>
                 </div>
                 <div class="col-md-4 text-end">
-                    <a href="/FYP_FoodOrderApp/Kitchen/dessertCompleted.php" class="btn btn-success">View Completed Orders</a>
+                    <a href="../Kitchen/dessertCompleted.php" class="btn btn-success">View Completed Orders</a>
                 </div>
             </div>
-
-            <div id="ordersContent">
-                <!-- This div will be populated by the AJAX call -->
-            </div>
-            <audio id="newOrderAudio" src="/FYP_FoodOrderApp/Audio/bell.mp3">
+            <div id="ordersContent"></div>
+            <audio id="newOrderAudio" src="../Audio/bell.mp3">
                 Your browser does not support the audio element
             </audio>
         </div>
 
-        <!-- Bootstrap JS, Popper.js, and jQuery -->
         <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
         <script>
             $(document).ready(function () {
-                // Track the number of current orders
                 let currentOrderCount = sessionStorage.getItem('currentOrderCount') ? parseInt(sessionStorage.getItem('currentOrderCount')) : 0;
                 const newOrderAudio = document.getElementById('newOrderAudio');
 
-                // Function to auto-refresh
                 function refreshContent() {
                     $.ajax({
                         url: 'getOrdersDessert.php',
@@ -197,16 +171,13 @@ mysqli_close($link);
                             initializeEventListeners();
                             restoreCancelTextState();
 
-                            // Check the number of orders fetched
                             const newOrderCount = $('#ordersContent').find('tr[data-order-id]').length;
 
-                            // Compare with the current number of orders
                             if (newOrderCount > currentOrderCount) {
                                 $('#newOrderAlert').show().delay(5000).fadeOut(); // Show alert for new orders
                                 newOrderAudio.play();
                             }
 
-                            // Update the current order count and store it in session storage
                             currentOrderCount = newOrderCount;
                             sessionStorage.setItem('currentOrderCount', currentOrderCount);
                         },
@@ -216,7 +187,6 @@ mysqli_close($link);
                     });
                 }
 
-                // Function to initialize timers
                 function initializeTimers() {
                     $('tr[data-prep-time]').each(function () {
                         const $row = $(this);
@@ -252,7 +222,6 @@ mysqli_close($link);
                                 setTimeout(updateTimer, 1000);
                             }
                         }
-
                         updateTimer();
                     });
                 }
@@ -261,15 +230,10 @@ mysqli_close($link);
                     $('.dessert-name').click(function () {
                         const $this = $(this);
                         const menuorderID = $this.data('menuorder-id');
-
-                        // Add text style
                         $this.addClass('cancel-text');
 
-                        // Save state to local storage
                         localStorage.setItem(`dessert_cancel_${menuorderID}`, true);
-
-                        // Update notif and order status column in the database
-                        $.post('/FYP_FoodOrderApp/Kitchen/updateNotif.php', { menuorderID: menuorderID }, function (response) {
+                        $.post('../Kitchen/updateNotif.php', { menuorderID: menuorderID }, function (response) {
                             if (response.includes("successfully")) {
                                 console.log("Notification updated successfully and order marked as completed for menuorderID: " + menuorderID);
                             } else {
@@ -328,7 +292,6 @@ mysqli_close($link);
                         }
                     });
                 }
-
                 $('#categoryDropdown').change(function () {
                     let selectedOption = $(this).val();
                     let redirectUrl = '';
@@ -349,19 +312,13 @@ mysqli_close($link);
                         window.location.href = redirectUrl;
                     }
                 });
-
-                // Initial load
                 refreshContent();
-
-                // Set up auto-refresh every 10 seconds
                 setInterval(refreshContent, 10000);
             });
-
+            
             function navigateToBack() {
-                // Redirect to the next category page (replace URL with desired destination)
-                window.location.href = "/FYP_FoodOrderApp/Kitchen/foodCategory.php"; // Change "kitchen.html" to the actual URL of the next page
+                window.location.href = "../Kitchen/foodCategory.php";
             }
         </script>
-
     </body>
 </html>

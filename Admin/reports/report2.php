@@ -1,19 +1,19 @@
 <?php
-$host = "localhost";
-$user = "root";
-$password = "";
-$db = "mydb";
-
-$link = mysqli_connect($host, $user, $password, $db) or die(mysqli_connect_error());
+    $host = "localhost";
+    $user = "root";
+    $password = "";
+    $db = "mydb";
+    
+    $link = mysqli_connect($host, $user, $password, $db) or die(mysqli_connect_error());
 
 $query = "SELECT staff.staffID, staff.first_name, staff.last_name, COUNT(*) AS total_orders
-FROM orders
-INNER JOIN menu_order ON orders.orderID = menu_order.orderID
-INNER JOIN staff ON orders.staffID = staff.staffID
-WHERE NOT (staff.first_name = 'Admin' AND staff.last_name = 'Aaron') 
-AND NOT (staff.first_name = 'Kitchen' AND staff.last_name = 'Samantha')
-GROUP BY staff.staffID, staff.first_name, staff.last_name
-ORDER BY total_orders DESC";
+        FROM orders
+        INNER JOIN menu_order ON orders.orderID = menu_order.orderID
+        INNER JOIN staff ON orders.staffID = staff.staffID
+        WHERE NOT (staff.first_name = 'Admin' AND staff.last_name = 'Aaron') 
+        AND NOT (staff.first_name = 'Kitchen' AND staff.last_name = 'Samantha')
+        GROUP BY staff.staffID, staff.first_name, staff.last_name
+        ORDER BY total_orders DESC";
 
 $result = mysqli_query($link, $query) or die(mysqli_error($link));
 
@@ -27,19 +27,15 @@ while ($row = mysqli_fetch_assoc($result)) {
 
 mysqli_close($link);
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Sales Report</title>
-        <!-- Bootstrap CSS -->
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-        <!-- Google Fonts -->
         <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-        <!-- Custom CSS -->
         <style>
         body {
             padding-top: 70px;
@@ -52,28 +48,23 @@ mysqli_close($link);
         .navbar-brand {
             font-size: 40px;
         }
-
         .navbar-nav .nav-link {
             color: #ffffff;
         }
         .navbar-nav .nav-link:hover {
             color: #cccccc;
-        }
-        
+        }        
         .backnav {
             margin-right: 10px;
-        }
-        
+        }        
         .header {
             text-align: center;
             
-        }
-        
+        }        
         .mt-5 {         
             max-width: 900px;
         }
-        
-                .print-btn{
+        .print-btn{
             margin-right: 10px;
         }
         </style>
@@ -88,22 +79,22 @@ mysqli_close($link);
                 <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link" href="/FYP_FoodOrderApp/Login/admin.php">Home</a>
+                        <a class="nav-link" href="../../Login/admin.php">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/FYP_FoodOrderApp/Admin/table/tablesAdmin.php">Tables</a>
+                        <a class="nav-link" href="../../Admin/tables/tables_admin.php">Tables</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/FYP_FoodOrderApp/Admin/user/viewUsers.php">Users</a>
+                        <a class="nav-link" href="../../Admin/user/viewUsers.php">Users</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/FYP_FoodOrderApp/Admin/menu/viewMenu.php">Menu</a>
+                        <a class="nav-link" href="../../Admin/menu/viewMenu.php">Menu</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/FYP_FoodOrderApp/Admin/orders/viewAllOrders.php">View All Orders</a>
+                        <a class="nav-link" href="../../Admin/orders/viewAllOrders.php">View All Orders</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/FYP_FoodOrderApp/Admin/reports/Report.php">Reports</a>
+                        <a class="nav-link" href="../../Admin/reports/report.php">Reports</a>
                     </li>
                 </ul>
                     <ul class="navbar-nav ms-auto">
@@ -111,10 +102,10 @@ mysqli_close($link);
                             <button class="print-btn btn btn-success" onclick="window.print()">Print</button>
                         </li>
                         <li class="nav-item">
-                            <a class="btn btn-outline-light backnav" href="/FYP_FoodOrderApp/Admin/reports/report.php">Back</a>
+                            <a class="btn btn-outline-light backnav" href="../../Admin/reports/report.php">Back</a>
                         </li>
                         <li class="nav-item">
-                            <a class="btn btn-outline-light logOutNav" id="logoutButton" href="/FYP_FoodOrderApp/index.php">Logout</a>
+                            <a class="btn btn-outline-light logOutNav" id="logoutButton" href="../../index.php">Logout</a>
                         </li>
                     </ul>
                 </div>
@@ -152,7 +143,6 @@ mysqli_close($link);
                 </div>
             </div>
         </form>
-
             <canvas id="salesChart" width="800" height="400"></canvas>
         </div>
 
@@ -160,22 +150,15 @@ mysqli_close($link);
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <script>
-            // Add event listener to the logout button
             document.getElementById('logoutButton').addEventListener('click', function (event) {
-                // Prevent default action
                 event.preventDefault();
-                // Show confirmation dialog
                 if (confirm('Are you sure you want to logout?')) {
-                    // If confirmed, proceed with the logout
-                    window.location.href = '/FYP_FoodOrderApp/index.php';
+                    window.location.href = '../../index.php';
                 }
-            });
-            
-            // Prepare the data for the chart
+            });            
         var staffNames = <?php echo json_encode($staffNames); ?>;
         var totalOrders = <?php echo json_encode($totalOrders); ?>;
 
-        // Create the chart
         var ctx = document.getElementById('salesChart').getContext('2d');
         var salesChart = new Chart(ctx, {
             type: 'bar',

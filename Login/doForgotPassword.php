@@ -8,12 +8,12 @@ require '../phpMailer/src/Exception.php';
 require '../phpMailer/src/PHPMailer.php';
 require '../phpMailer/src/SMTP.php';
 
-$host = "localhost";
-$user = "root";
-$password = "";
-$db = "mydb";
-
-$link = mysqli_connect($host, $user, $password, $db) or die(mysqli_connect_error());
+    $host = "localhost";
+    $user = "root";
+    $password = "";
+    $db = "mydb";
+    
+    $link = mysqli_connect($host, $user, $password, $db) or die(mysqli_connect_error());
 
 $query = "SELECT * FROM staff";
 $result = mysqli_query($link, $query) or die(mysqli_error($link));
@@ -67,7 +67,7 @@ if ($valid == 1) {
             echo "
             <script>
             alert('Verification code sent successfully');
-            document.location.href = '/FYP_FoodOrderApp/Login/verifyCode.php';
+            document.location.href = '../Login/verifyCode.php';
             </script>
             ";
         } catch (Exception $e) {
@@ -78,7 +78,7 @@ if ($valid == 1) {
     echo "
     <script>
     alert('Something went wrong! Check your staff id, full name and email again.');
-    document.location.href = '/FYP_FoodOrderApp/Login/forgotPassword.php';
+    document.location.href = '../Login/forgotPassword.php';
     </script>
     ";
 }

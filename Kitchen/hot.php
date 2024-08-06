@@ -1,11 +1,11 @@
 <?php
 session_start();
-$host = "localhost";
-$user = "root";
-$password = "";
-$db = "mydb";
-
-$link = mysqli_connect($host, $user, $password, $db) or die(mysqli_connect_error());
+    $host = "localhost";
+    $user = "root";
+    $password = "";
+    $db = "mydb";
+    
+    $link = mysqli_connect($host, $user, $password, $db) or die(mysqli_connect_error());
 
 $query = "SELECT *
           FROM orders
@@ -59,83 +59,66 @@ mysqli_close($link);
                 justify-content: center;
                 align-items: center;
             }
-
             .navbar {
                 background-color: #343a40;
             }
-
             .navbar-brand {
                 font-size: 40px;
             }
-
             .navbar-nav .nav-link {
                 color: #ffffff;
             }
-
             .navbar-nav .nav-link:hover {
                 color: #cccccc;
             }
-
             .backnav {
                 position: absolute;
                 left: 0%;
             }
-
             .completed-btn {
                 position: relative;
                 padding: 5px;
                 bottom: -11px;
                 left: -10%;
             }
-
             .cancel-text {
                 text-decoration: line-through;
             }
-
             .order-gone {
                 display: none;
             }
-
             .serve-later {
                 color: blue;
             }
-
             .table-header {
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
             }
-
             .table-header h3 {
                 margin: 0;
             }
-
             .table-header .order-time {
                 font-size: 1.2rem;
                 color: grey;
             }
-
             .timer-cell {
                 font-weight: bold;
             }
-
             .row-green {
                 background-color: #d4edda;
             }
-
             .row-yellow {
                 background-color: #fff3cd;
             }
-
             .row-red {
                 background-color: #f8d7da;
             }
-            audio{
+            audio {
                 opacity: 0%;
             }
         </style>
     </head>
-
     <body>
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
             <div class="container position-relative d-flex justify-content-center">
@@ -147,7 +130,6 @@ mysqli_close($link);
         </nav>
 
         <div class="container">
-            <!-- Navigation Buttons -->
             <div id="newOrderAlert" class="alert alert-success" role="alert" style="display:none;">
                 New orders have arrived!
             </div>
@@ -162,158 +144,145 @@ mysqli_close($link);
                     </select>
                 </div>
                 <div class="col-md-4 text-end">
-                    <a href="/FYP_FoodOrderApp/Kitchen/hotCompleted.php" class="btn btn-success">View Completed Orders</a>
+                    <a href="../Kitchen/hotCompleted.php" class="btn btn-success">View Completed Orders</a>
                 </div>
             </div>
-
-            <div id="ordersContent">
-                <!-- This div will be populated by the AJAX call -->
-            </div>            
-            <audio id="newOrderAudio" src="/FYP_FoodOrderApp/Audio/bell.mp3">
+            <div id="ordersContent"></div>            
+            <audio id="newOrderAudio" src="../Audio/bell.mp3">
                 Your browser does not support the audio element
             </audio>
         </div>
 
-        <!-- Bootstrap JS, Popper.js, and jQuery -->
         <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
         <script>
-                    $(document).ready(function () {
-                        // Track the number of current orders
-                        // Retrieve the stored order count from session storage, or initialize it to 0
-                        let currentOrderCount = sessionStorage.getItem('currentOrderCount') ? parseInt(sessionStorage.getItem('currentOrderCount')) : 0;
-                        const newOrderAudio = document.getElementById('newOrderAudio');
+            $(document).ready(function () {
+                let currentOrderCount = sessionStorage.getItem('currentOrderCount') ? parseInt(sessionStorage.getItem('currentOrderCount')) : 0;
+                const newOrderAudio = document.getElementById('newOrderAudio');
 
-                        // Function to auto-refresh
-                        function refreshContent() {
-                            $.ajax({
-                                url: 'getOrdersHot.php',
-                                type: 'GET',
-                                success: function (data) {
-                                    $('#ordersContent').html(data);
-                                    initializeTimers();
-                                    initializeEventListeners();
-                                    restoreCancelTextState();
+                function refreshContent() {
+                    $.ajax({
+                        url: 'getOrdersHot.php',
+                        type: 'GET',
+                        success: function (data) {
+                            $('#ordersContent').html(data);
+                            initializeTimers();
+                            initializeEventListeners();
+                            restoreCancelTextState();
 
-                                    // Check the number of orders fetched
-                                    const newOrderCount = $('#ordersContent').find('tr[data-order-id]').length;
+                            const newOrderCount = $('#ordersContent').find('tr[data-order-id]').length;
+                            if (newOrderCount > currentOrderCount) {
+                                $('#newOrderAlert').show().delay(5000).fadeOut();
+                                newOrderAudio.play();
+                            }
 
-                                    // Compare with the current number of orders
-                                    if (newOrderCount > currentOrderCount) {
-                                        $('#newOrderAlert').show().delay(5000).fadeOut(); // Show alert for new orders
-                                        newOrderAudio.play();
-                                    }
-
-                                    // Update the current order count and store it in session storage
-                                    currentOrderCount = newOrderCount;
-                                    sessionStorage.setItem('currentOrderCount', currentOrderCount);
-                                },
-                                error: function () {
-                                    console.error('Error refreshing content');
-                                }
-                            });
+                            currentOrderCount = newOrderCount;
+                            sessionStorage.setItem('currentOrderCount', currentOrderCount);
+                        },
+                        error: function () {
+                            console.error('Error refreshing content');
                         }
-                        // Function to initialize timers
-                        function initializeTimers() {
-                            $('tr[data-prep-time]').each(function () {
-                                const $row = $(this);
-                                const orderId = $row.data('menuorder-id');
-                                const prepTime = parseInt($row.data('prep-time'), 10);
-                                const totalTime = prepTime * 60;
+                    });
+                }
 
-                                let remainingTime = localStorage.getItem(`timer_${orderId}`);
-                                if (remainingTime === null) {
-                                    remainingTime = totalTime;
-                                } else {
-                                    remainingTime = parseInt(remainingTime, 10);
-                                }
+                function initializeTimers() {
+                    $('tr[data-prep-time]').each(function () {
+                        const $row = $(this);
+                        const orderId = $row.data('menuorder-id');
+                        const prepTime = parseInt($row.data('prep-time'), 10);
+                        const totalTime = prepTime * 60;
 
-                                function updateTimer() {
-                                    const minutes = Math.floor(remainingTime / 60);
-                                    const seconds = remainingTime % 60;
-                                    const percentage = (remainingTime / totalTime) * 100;
-
-                                    $row.find('.timer-cell').text(`${minutes}:${seconds.toString().padStart(2, '0')}`);
-
-                                    if (percentage > 50) {
-                                        $row.removeClass('row-yellow row-red').addClass('row-green');
-                                    } else if (percentage > 20) {
-                                        $row.removeClass('row-green row-red').addClass('row-yellow');
-                                    } else {
-                                        $row.removeClass('row-green row-yellow').addClass('row-red');
-                                    }
-
-                                    if (remainingTime > 0) {
-                                        remainingTime--;
-                                        localStorage.setItem(`timer_${orderId}`, remainingTime);
-                                        setTimeout(updateTimer, 1000);
-                                    }
-                                }
-
-                                updateTimer();
-                            });
+                        let remainingTime = localStorage.getItem(`timer_${orderId}`);
+                        if (remainingTime === null) {
+                            remainingTime = totalTime;
+                        } else {
+                            remainingTime = parseInt(remainingTime, 10);
                         }
-                        // Function to initialize event listeners
-                        function initializeEventListeners() {
-                            $('.hot-name').click(function () {
-                                const $this = $(this);
-                                const menuorderID = $this.data('menuorder-id');
 
-                                $this.addClass('cancel-text');
+                        function updateTimer() {
+                            const minutes = Math.floor(remainingTime / 60);
+                            const seconds = remainingTime % 60;
+                            const percentage = (remainingTime / totalTime) * 100;
 
-                                localStorage.setItem(`hot_cancel_${menuorderID}`, true);
+                            $row.find('.timer-cell').text(`${minutes}:${seconds.toString().padStart(2, '0')}`);
+                            if (percentage > 50) {
+                                $row.removeClass('row-yellow row-red').addClass('row-green');
+                            } else if (percentage > 20) {
+                                $row.removeClass('row-green row-red').addClass('row-yellow');
+                            } else {
+                                $row.removeClass('row-green row-yellow').addClass('row-red');
+                            }
 
-                                $.post('/FYP_FoodOrderApp/Kitchen/updateNotif.php', {menuorderID: menuorderID}, function (response) {
+                            if (remainingTime > 0) {
+                                remainingTime--;
+                                localStorage.setItem(`timer_${orderId}`, remainingTime);
+                                setTimeout(updateTimer, 1000);
+                            }
+                        }
+
+                        updateTimer();
+                    });
+                }
+
+                function initializeEventListeners() {
+                    $('.hot-name').click(function () {
+                        const $this = $(this);
+                        const menuorderID = $this.data('menuorder-id');
+
+                        $this.addClass('cancel-text');
+
+                        localStorage.setItem(`hot_cancel_${menuorderID}`, true);
+
+                        $.post('../Kitchen/updateNotif.php', {menuorderID: menuorderID}, function (response) {
+                            if (response.includes("successfully")) {
+                                console.log("Notification updated successfully for menuorderID: " + menuorderID);
+                            } else {
+                                console.error("Error updating notification status: " + response);
+                            }
+                        });
+                    });
+
+                    $('.serve-all-btn').click(function () {
+                        let tableNo = $(this).data('table-no');
+                        let $tableContainer = $(`#table-container-${tableNo}`);
+                        let orderIDs = [];
+                        let menuorderIDs = [];
+
+                        $tableContainer.find('tbody tr').each(function () {
+                            orderIDs.push($(this).data('order-id'));
+                        });
+
+                        $tableContainer.find('tbody td').each(function () {
+                            menuorderIDs.push($(this).data('menuorder-id'));
+                        });
+
+                        if (orderIDs.length > 0) {
+                            if (confirm(`Are you sure you want to serve all orders for Table ${tableNo}?`)) {
+                                $.post('updateOrderStatusHot.php', {orderIDs: orderIDs, menuorderIDs: menuorderIDs}, function (response) {
                                     if (response.includes("successfully")) {
-                                        console.log("Notification updated successfully for menuorderID: " + menuorderID);
-                                    } else {
-                                        console.error("Error updating notification status: " + response);
-                                    }
-                                });
-                            });
-
-                            $('.serve-all-btn').click(function () {
-                                let tableNo = $(this).data('table-no');
-                                let $tableContainer = $(`#table-container-${tableNo}`);
-                                let orderIDs = [];
-                                let menuorderIDs = [];
-
-                                $tableContainer.find('tbody tr').each(function () {
-                                    orderIDs.push($(this).data('order-id'));
-                                });
-
-                                $tableContainer.find('tbody td').each(function () {
-                                    menuorderIDs.push($(this).data('menuorder-id'));
-                                });
-
-                                if (orderIDs.length > 0) {
-                                    if (confirm(`Are you sure you want to serve all orders for Table ${tableNo}?`)) {
-                                        $.post('updateOrderStatusHot.php', {orderIDs: orderIDs, menuorderIDs: menuorderIDs}, function (response) {
-                                            if (response.includes("successfully")) {
-                                                $tableContainer.fadeOut(500, function () {
-                                                    $(this).remove();
-                                                });
-                                                alert("Orders served successfully.");
-
-                                                const servedOrderIDs = JSON.parse(response.split("successfully")[1]);
-                                                servedOrderIDs.forEach(orderId => {
-                                                    localStorage.removeItem(`timer_${orderId}`);
-                                                });
-                                            } else {
-                                                console.error("Error updating order status: " + response);
-                                                alert("Error updating order status. Please try again.");
-                                            }
+                                        $tableContainer.fadeOut(500, function () {
+                                            $(this).remove();
                                         });
-                                    }
-                                } else {
-                                    console.error("No orders found for the selected table.");
-                                    alert("No orders found for the selected table.");
-                                }
-                            });
 
+                                        alert("Orders served successfully.");
+                                        const servedOrderIDs = JSON.parse(response.split("successfully")[1]);
+                                        servedOrderIDs.forEach(orderId => {
+                                            localStorage.removeItem(`timer_${orderId}`);
+                                        });
+                                    } else {
+                                        console.error("Error updating order status: " + response);
+                                        alert("Error updating order status. Please try again.");
+                                    }
+                                });
+                            }
+                        } else {
+                            console.error("No orders found for the selected table.");
+                            alert("No orders found for the selected table.");
                         }
-                        
-                                        function restoreCancelTextState() {
+                    });
+                }
+
+                function restoreCancelTextState() {
                     $('.hot-name').each(function () {
                         const $this = $(this);
                         const menuorderID = $this.data('menuorder-id');
@@ -324,40 +293,35 @@ mysqli_close($link);
                     });
                 }
 
-                            $('#categoryDropdown').change(function () {
-                                let selectedOption = $(this).val();
-                                let redirectUrl = '';
-                                switch (selectedOption) {
-                                    case 'drinks':
-                                        redirectUrl = 'drinks.php';
-                                        break;
-                                    case 'hot':
-                                        redirectUrl = 'hot.php';
-                                        break;
-                                    case 'dessert':
-                                        redirectUrl = 'dessert.php';
-                                        break;
-                                    default:
-                                        redirectUrl = '';
-                                }
-                                if (redirectUrl) {
-                                    window.location.href = redirectUrl;
-                                }
-                            });
-                            
-                        // Initial load
-                        refreshContent();
-
-                        // Set up auto-refresh every 10 seconds
-                        setInterval(refreshContent, 10000);
-                    });
-
-                    function navigateToBack() {
-                        // Redirect to the next category page (replace URL with desired destination)
-                        window.location.href = "/FYP_FoodOrderApp/Kitchen/foodCategory.php"; // Change "kitchen.html" to the actual URL of the next page
+                $('#categoryDropdown').change(function () {
+                    let selectedOption = $(this).val();
+                    let redirectUrl = '';
+                    switch (selectedOption) {
+                        case 'drinks':
+                            redirectUrl = 'drinks.php';
+                            break;
+                        case 'hot':
+                            redirectUrl = 'hot.php';
+                            break;
+                        case 'dessert':
+                            redirectUrl = 'dessert.php';
+                            break;
+                        default:
+                            redirectUrl = '';
                     }
 
-        </script>
+                    if (redirectUrl) {
+                        window.location.href = redirectUrl;
+                    }
+                });
 
+                refreshContent();
+                setInterval(refreshContent, 10000);
+            });
+
+            function navigateToBack() {
+                window.location.href = "../Kitchen/foodCategory.php";
+            }
+        </script>
     </body>
 </html>

@@ -1,11 +1,11 @@
 <?php
 session_start();
-$host = "localhost";
-$user = "root";
-$password = "";
-$db = "mydb";
-
-$link = mysqli_connect($host, $user, $password, $db) or die(mysqli_connect_error());
+    $host = "localhost";
+    $user = "root";
+    $password = "";
+    $db = "mydb";
+    
+    $link = mysqli_connect($host, $user, $password, $db) or die(mysqli_connect_error());
 
 if (isset($_POST['clear1'])) {
     $query = "UPDATE orders SET orderStatusDrink = 2 WHERE orderStatusDrink = 1";
@@ -37,8 +37,7 @@ if (isset($_POST['clear3'])) {
         echo "Orders cleared successfully.";
     } else {
         echo "Error clearing orders: " . mysqli_error($link);
-    }
-        
+    }        
     mysqli_close($link);
 }
 ?>
