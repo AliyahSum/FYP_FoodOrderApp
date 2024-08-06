@@ -1,11 +1,11 @@
 <?php
 session_start();
-$host = "localhost";
-$user = "root";
-$password = "";
-$db = "mydb";
-
-$link = mysqli_connect($host, $user, $password, $db);
+    $host = "localhost";
+    $user = "root";
+    $password = "";
+    $db = "mydb";
+    
+    $link = mysqli_connect($host, $user, $password, $db) or die(mysqli_connect_error());
 
 if (!$link) {
     die("Connection failed: " . mysqli_connect_error());
@@ -22,10 +22,7 @@ if (isset($_GET['table_number'])) {
 
 $query = "SELECT *
           FROM menu_item mi 
-          INNER JOIN category c ON mi.categoryID = c.categoryID
-          LEFT JOIN menu_order mo ON mi.menuitemID = mo.menuitemID
-          LEFT JOIN doneness_level dl ON mo.donenessID = dl.donenessID
-          LEFT JOIN drink_option do ON mo.drinkoptionID = do.drinkoptionID";
+          INNER JOIN category c ON mi.categoryID = c.categoryID";
 
 $result = mysqli_query($link, $query) or die(mysqli_error($link));
 
@@ -34,7 +31,6 @@ while ($row = mysqli_fetch_assoc($result)) {
     $arrItems[] = $row;
 }
 
-// Query to check for notifications
 $notifQuery = "SELECT COUNT(*) as notif_count FROM menu_order WHERE notif = 1";
 $notifResult = mysqli_query($link, $notifQuery);
 $notifCount = mysqli_fetch_assoc($notifResult)['notif_count'];
@@ -67,9 +63,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['itemName'])) {
     ];
 
     $_SESSION['addedItems'] = $addedItems;
-    $itemAdded = true;  // Set itemAdded to true
+    $itemAdded = true;
 }
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -105,11 +100,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['itemName'])) {
                 font-size: 20px;
                 margin-right: 5px;
             }
-            
-                    .backnav {
-            left: 0%;
-        }
-            
+            .backnav {
+                left: 0%;
+            }
             .btn-success {
                 margin-left: 30px;
             }
@@ -120,7 +113,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['itemName'])) {
             .category-row {
                 margin-bottom: 20px;
             }
-
         </style>
     </head>
     <body>
@@ -169,9 +161,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['itemName'])) {
                     </ul>
                 </div>
             </div>
-        </nav>
-
-        
+        </nav>       
 
         <div class="container mt-5">
             <?php
@@ -223,14 +213,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['itemName'])) {
                 </div>
                 <?php
             }
-
             if (!empty($printedCategories)) {
                 echo '</div>'; 
             }
             ?>
         </div>
 
-        <!-- Modal -->
         <div class="modal fade" id="orderModal" tabindex="-1" aria-labelledby="orderModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -240,7 +228,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['itemName'])) {
                     </div>
                     <div class="modal-body">
                         <form id="orderForm" method="post" action="OrderMenu.php">
-                                                        <div class="mb-3" id="donenessLevelContainer"></div>
+                            <div class="mb-3" id="donenessLevelContainer"></div>
                             <div class="mb-3" id="drinkOptionsContainer"></div>
                             <div class="mb-3">
                                 <label for="serveLater" class="form-label">Serve later:</label>
@@ -289,7 +277,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['itemName'])) {
                     'Medium Well': 5,
                     'Well Done': 6
                 };
-
                 var drinkMap = {
                     'NA': 1,
                     'Hot': 2,
@@ -395,14 +382,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['itemName'])) {
             });
 
             function navigateToBack() {
-                window.location.href = "/FYP_FoodOrderApp/Server/tables.php"; // Change "tables.php" to the actual URL of the previous page
+                window.location.href = "../Server/tables.php";
             }
-
             function refreshPage() {
                 window.location.reload();
             }
-
-            // Set the interval to refresh the page every 30 seconds (30000 milliseconds)
             setInterval(refreshPage, 30000); 
         </script>
     </body>

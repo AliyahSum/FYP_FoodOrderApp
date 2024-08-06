@@ -1,36 +1,31 @@
 <?php
 session_start();
-$host = "localhost";
-$user = "root";
-$password = "";
-$db = "mydb";
-
-$link = mysqli_connect($host, $user, $password, $db) or die(mysqli_connect_error());
+    $host = "localhost";
+    $user = "root";
+    $password = "";
+    $db = "mydb";
+    
+    $link = mysqli_connect($host, $user, $password, $db) or die(mysqli_connect_error());
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['num_customers']) && isset($_POST['table_number'])) {
     $num_customers = $_POST['num_customers'];
     $table_number = $_POST['table_number'];
 
-    // Fetch the max_cust value for the table
     $query = "SELECT max_cust FROM cust_table WHERE table_num = '$table_number'";
     $result = mysqli_query($link, $query) or die(mysqli_error($link));
     $row = mysqli_fetch_assoc($result);
     $max_cust = $row['max_cust'];
 
     if ($num_customers <= $max_cust) {
-        // Save number of customers and session number in session
         $_SESSION['num_customers'] = $num_customers;
         $_SESSION['table_number'] = $table_number;
 
-        // Initialize session number if not set
         if (!isset($_SESSION['table_sessions'][$table_number])) {
             $_SESSION['table_sessions'][$table_number] = 0;
         }
 
-        // Increment session number
         $_SESSION['table_sessions'][$table_number] ++;
 
-        // Update table availability in the database
         $query = "UPDATE cust_table SET isAvailable = 0 WHERE table_num = '$table_number'";
         mysqli_query($link, $query) or die(mysqli_error($link));
 
@@ -41,7 +36,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['num_customers']) && i
     exit;
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -55,7 +49,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['num_customers']) && i
                 flex-direction: column;
                 align-items: center;
             }
-
             .role-buttons {
                 display: grid;
                 grid-template-columns: repeat(5, 1fr);
@@ -68,7 +61,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['num_customers']) && i
                 padding-left: 50px;
                 padding-right: 50px;
             }
-
             .role-button {
                 width: 190px;
                 height: 100px;
@@ -77,25 +69,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['num_customers']) && i
                 box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
                 margin-left: -100px;
             }
-
             .navbar {
                 margin-bottom: 20px;
                 padding: 10px;
             }
-
             .text-light {
                 padding-left: 30px;
                 padding-top: 20px;
             }
-
             .backnav {
                 margin-left: 25px;
             }
-
             .nav-item1 {
                 margin-left: -100px;
             }
-
             h4 {
                 font-size: 40px;
                 text-align: center;
@@ -103,16 +90,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['num_customers']) && i
                 padding: 10px;
                 padding-left: 250px;
             }
-
             .continue-button, .finalize-button {
                 width: 400px;
                 font-size: 25px;
             }
-
             .mb-3 {
                 margin-left: 30px;
             }
-
             @media screen and (max-width: 820px) {
                 .role-buttons {
                     grid-template-columns: repeat(3, 1fr);
@@ -120,7 +104,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['num_customers']) && i
                     margin-top: 100px;
                     gap: -150px;
                 }
-
                 .role-button {
                     width: 180px;
                     height: 100px;
@@ -129,7 +112,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['num_customers']) && i
                     margin-left: -90px;
                 }
             }
-
             @media screen and (max-width: 1180px) {
                 .role-buttons {
                     grid-template-columns: repeat(3.5, 1fr);
@@ -143,7 +125,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['num_customers']) && i
     <body>
         <nav class="navbar navbar-expand-xxl bg-dark">
             <div class="container-fluid">
-                <a class="btn btn-outline-light backnav" href="/FYP_FoodOrderApp/Login/role.php">Back</a>
+                <a class="btn btn-outline-light backnav" href="../Login/role.php">Back</a>
                 <ul class="navbar-nav mx-auto">
                     <li class="nav-item1">
                         <h4>Serving</h4>
@@ -259,7 +241,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['num_customers']) && i
                             var btn = $('.btn[data-table-number="' + tableNumber + '"]');
                             var sessionNumber = result.session_num;
                             btn.data('session', sessionNumber).removeClass('btn-primary').addClass('btn-secondary');
-                            $('#optionsModal .modal-title').text('Table ' + tableNumber + ' (Session ' + sessionNumber + ')');
+                            $('#optionsModal .modal-title').text('Table ' + tableNumber);
                             $('#optionsModal').modal('show');
                         }, 500);
                     } else if (result.status === 'error') {
@@ -279,8 +261,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['num_customers']) && i
                         function refreshPage() {
                 window.location.reload();
             }
-
-            // Set the interval to refresh the page every 30 seconds (30000 milliseconds)
             setInterval(refreshPage, 10000); 
         </script>
     </body>

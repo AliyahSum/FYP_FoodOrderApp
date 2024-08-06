@@ -1,11 +1,11 @@
 <?php
 session_start();
-$host = "localhost";
-$user = "root";
-$password = "";
-$db = "mydb";
-
-$link = mysqli_connect($host, $user, $password, $db) or die(mysqli_connect_error());
+    $host = "localhost";
+    $user = "root";
+    $password = "";
+    $db = "mydb";
+    
+    $link = mysqli_connect($host, $user, $password, $db) or die(mysqli_connect_error());
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['order_id'])) {
     $orderId = intval($_POST['order_id']);
@@ -116,11 +116,9 @@ function getItemOptionWord($category, $itemOption) {
                 font-size: 40px;
                 margin-left: 25px;
             }
-
             .backnav {
                 margin-left:40px;
             }
-
             .btn-outline-light {
                 border-color: #ffffff;
                 color: #ffffff;
@@ -175,7 +173,6 @@ function getItemOptionWord($category, $itemOption) {
                 display: block;
                 width: 100%;
             }
-
             h2{
                 background-color:black;
                 color:white;
@@ -249,37 +246,32 @@ function getItemOptionWord($category, $itemOption) {
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
         <script>
-                    document.querySelectorAll('.btn-served').forEach(button => {
-                        button.addEventListener('click', function () {
-                            if (confirm('Are you sure you served all the food?')) {
-                                const orderId = this.getAttribute('data-order-id');
-                                fetch('', {
-                                    method: 'POST',
-                                    headers: {
-                                        'Content-Type': 'application/x-www-form-urlencoded'
-                                    },
-                                    body: `order_id=${orderId}`
-                                })
-                                        .then(response => response.json())
-                                        .then(data => {
-                                            if (data.success) {
-                                                this.closest('.order-card').remove();
-                                            }
-                                        })
-                                        .catch(error => console.error('Error:', error));
+            document.querySelectorAll('.btn-served').forEach(button => {
+                button.addEventListener('click', function () {
+                    if (confirm('Are you sure you served all the food?')) {
+                        const orderId = this.getAttribute('data-order-id');
+                        fetch('', {method: 'POST',headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded'
+                            },
+                            body: `order_id=${orderId}`
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                this.closest('.order-card').remove();
                             }
-                        });
-                    });
-
-                    function refreshPage() {
-                        window.location.reload();
+                        })
+                        .catch(error => console.error('Error:', error));
                     }
-
-                    setInterval(refreshPage, 10000);
-
-                    function navigateToBack() {
-                        window.location.href = "/FYP_FoodOrderApp/Server/OrderMenu.php";
-                    }
+                });
+            });            
+            function refreshPage() {
+                window.location.reload();
+            }
+            setInterval(refreshPage, 10000);
+            function navigateToBack() {
+                window.location.href = "../Server/OrderMenu.php";
+            }
         </script>
     </body>
 </html>

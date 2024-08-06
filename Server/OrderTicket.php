@@ -4,21 +4,15 @@ session_start();
 if (!isset($_SESSION['addedItems'])) {
     $_SESSION['addedItems'] = [];
 }
-
 if (!isset($_SESSION['usedTableSessions'])) {
     $_SESSION['usedTableSessions'] = [];
 }
-
-// Check if usedTableSessions is an array
 if (!is_array($_SESSION['usedTableSessions'])) {
     $_SESSION['usedTableSessions'] = [];
 }
-
-// Reset usedTableSessions if it reaches 99
 if (count($_SESSION['usedTableSessions']) >= 99) {
     $_SESSION['usedTableSessions'] = [];
 }
-
 if (!isset($_SESSION['table_sessions'])) {
     $_SESSION['table_sessions'] = 1;
 }
@@ -29,12 +23,11 @@ $staffID = $_SESSION['staffID'];
 if (isset($_SESSION['table_number'])) {
     $table_number = $_SESSION['table_number'];
 }
-
 if (isset($_GET['table_number'])) {
     $table_number = $_GET['table_number'];
 }
-$table_sessions = $_SESSION['table_sessions'];
 
+$table_sessions = $_SESSION['table_sessions'];
 $lunchItemOptionsMap = [
     '1' => 'Not Applicable',
     '2' => 'Rare',
@@ -43,7 +36,6 @@ $lunchItemOptionsMap = [
     '5' => 'Medium Well',
     '6' => 'Well Done',
 ];
-
 $drinksItemOptionsMap = [
     '1' => 'Not Applicable',
     '2' => 'Hot',
@@ -54,36 +46,33 @@ $drinksItemOptionsMap = [
     $user = "root";
     $password = "";
     $db = "mydb";
-
-    $link = mysqli_connect($host, $user, $password, $db);
+    
+    $link = mysqli_connect($host, $user, $password, $db) or die(mysqli_connect_error());
 
     if (!$link) {
         die("Connection failed: " . mysqli_connect_error());
     }
     
-        // Query to check for notifications
     $notifQuery = "SELECT COUNT(*) as notif_count FROM menu_order WHERE notif = 1";
     $notifResult = mysqli_query($link, $notifQuery);
     $notifCount = mysqli_fetch_assoc($notifResult)['notif_count'];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
     date_default_timezone_set('Asia/Singapore');
     $orderDateTime = date("Y-m-d H:i:s");
     $orderStatusHot = 0;
     $orderStatusDrink = 0;
     $orderStatusDessert = 0;
 
-    // Retrieve tableID based on table_number
     $query = "SELECT tableID FROM cust_table WHERE table_num = '$table_number'";
     $result = mysqli_query($link, $query);
 
     if (!$result) {
         die("Error retrieving tableID: " . mysqli_error($link));
     }
-
+    
     $row = mysqli_fetch_assoc($result);
-
+    
     if (!$row) {
         die("Table number not found in the database.");
     }
@@ -93,9 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!isset($_SESSION['usedTableSessions'])) {
         $_SESSION['usedTableSessions'] = [];
     }
-
     if (!in_array($table_sessions, $_SESSION['usedTableSessions'])) {
-        // Create a new order
         $queryOrders = "INSERT INTO orders (orderDateTime, staffID, tableID, orderStatusHot, orderStatusDrink, orderStatusDessert)
                         VALUES ('$orderDateTime', '$staffID', '$tableID', '$orderStatusHot','$orderStatusDrink','$orderStatusDessert')";
 
@@ -107,15 +94,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             die("Error inserting order: " . mysqli_error($link));
         }
     } else {
-        // Use existing order
         $orderID = $_SESSION['orderID'];
     }
-
     if (!isset($orderID)) {
         die("Order ID is not set.");
     }
 
-    // Insert items into menu_order table
     foreach ($addedItems as $item) {
         $itemName = $item['itemName'];
         $serveLater = $item['serveLater'];
@@ -135,7 +119,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             $message .= " Error adding order: " . $stmt->error;
         }
-
         $stmt->close();
     }
 
@@ -144,7 +127,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     header("Location: OrderTicket.php?success=1");
     exit();
 }
-
     mysqli_close($link);
 
 function getItemOptionWord($category, $itemOption) {
@@ -275,9 +257,9 @@ function getItemOptionWord($category, $itemOption) {
         </div>
 
         <script>
-<?php if (isset($_GET['success']) && $_GET['success'] == '1'): ?>
-                alert("Order submitted successfully!");
-<?php endif; ?>
+            <?php if (isset($_GET['success']) && $_GET['success'] == '1'): ?>
+                            alert("Order submitted successfully!");
+            <?php endif; ?>
 
             function updateQuantity(index, delta) {
                 const quantityElement = document.getElementById('quantity-' + index);
@@ -310,8 +292,7 @@ function getItemOptionWord($category, $itemOption) {
                     }
                 };
                 xhr.send("index=" + index);
-            }
-            
+            }            
         </script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     </body>
